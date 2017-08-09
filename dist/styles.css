@@ -118,13 +118,13 @@ button[name="start"] {
   width: 50%;
 }
 .onoffswitch-inner:before {
-  background-color: #00a74a;
+  background-color: #9f0f17;
   color: #fff;
   content: "ON";
   padding-left: 10px;
 }
 .onoffswitch-inner:after {
-  background-color: #9f0f17;
+  background-color: #00a74a;
   color: #fff;
   content: "OFF";
   padding-right: 10px;
