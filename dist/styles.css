@@ -1,0 +1,151 @@
+body {
+  background-color: #222;
+  font-family: 'Fredoka One', cursive;
+}
+.game {
+  align-items: center;
+  background-color: #444;
+  border: 5px solid #bbb;
+  border-radius: 10px;
+  color: #bbb;
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+  padding: 20px 10px;
+  width: 240px;
+}
+h1 {
+  font-size: 2.5em;
+  margin: 0;
+}
+h2 {
+  font-size: 2em;
+  margin: 10px;
+}
+.button-row {
+  display: flex;
+}
+.simon-button {
+  border: 5px solid #bbb;
+  border-radius: 10px;
+  cursor: pointer;
+  height: 100px;
+  margin: 5px;
+  pointer-events: auto;
+  width: 100px;
+}
+.simon-button.unclickable {
+  cursor: default;
+  pointer-events: none;
+}
+#btn-green {
+  background-color: #00a74a;
+}
+#btn-green.light {
+  background-color: #0fff79;
+}
+#btn-red {
+  background-color: #9f0f17;
+}
+#btn-red.light {
+  background-color: #eb2833;
+}
+#btn-yellow {
+  background-color: #cca707;
+}
+#btn-yellow.light {
+  background-color: #f8d335;
+}
+#btn-blue {
+  background-color: #094a8f;
+}
+#btn-blue.light {
+  background-color: #137ef0;
+}
+button[name="start"] {
+  background-color: #bbb;
+  border: 0;
+  border-radius: 10px;
+  color: #444;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1.25em;
+  height: 40px;
+  margin: 10px;
+  width: 200px;
+}
+#strict {
+  align-items: center;
+  display: flex;
+  font-size: 1.25em;
+  justify-content: space-between;
+  width: 200px;
+}
+.onoffswitch {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  width: 66px;
+}
+.onoffswitch-checkbox {
+  display: none;
+}
+.onoffswitch-label {
+  border: 2px solid #bbb;
+  border-radius: 10px;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+}
+.onoffswitch-inner {
+  display: block;
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s;
+  width: 200%;
+}
+.onoffswitch-inner:before,
+.onoffswitch-inner:after {
+  box-sizing: border-box;
+  color: #fff;
+  display: block;
+  float: left;
+  font-family: inherit;
+  font-size: 12px;
+  height: 17px;
+  line-height: 17px;
+  padding: 0;
+  width: 50%;
+}
+.onoffswitch-inner:before {
+  background-color: #00a74a;
+  color: #fff;
+  content: "ON";
+  padding-left: 10px;
+}
+.onoffswitch-inner:after {
+  background-color: #9f0f17;
+  color: #fff;
+  content: "OFF";
+  padding-right: 10px;
+  text-align: right;
+}
+.onoffswitch-switch {
+  background: #fff;
+  border: 2px solid #bbb;
+  border-radius: 10px;
+  bottom: 0;
+  display: block;
+  margin: 0;
+  position: absolute;
+  right: 45px;
+  top: 0;
+  transition: all 0.3s ease-in 0s;
+  width: 17px;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+  right: 0;
+}

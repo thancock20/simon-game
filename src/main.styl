@@ -1,0 +1,160 @@
+// variables
+
+$green = #00A74A
+$red = #9F0F17
+$yellow = #CCA707
+$blue = #094A8F
+$lightening = 30%
+
+$bodyBC = #222
+$gameBC = #444
+$highlight = #bbb
+
+// interface styling
+
+body
+  background-color: $bodyBC
+  font-family: 'Fredoka One', cursive
+
+.game
+  align-items: center
+  background-color: $gameBC
+  border: 5px solid $highlight
+  border-radius: 10px
+  color: $highlight
+  display: flex
+  flex-direction: column
+  margin: 20px auto
+  padding: 20px 10px
+  width: 240px
+
+h1
+  font-size: 2.5em
+  margin: 0
+
+h2
+  font-size: 2em
+  margin: 10px
+
+.button-row
+  display: flex
+
+.simon-button
+  border: 5px solid $highlight
+  border-radius: 10px
+  cursor: pointer
+  height: 100px
+  margin: 5px
+  pointer-events: auto
+  width: 100px
+
+  &.unclickable
+    cursor: default
+    pointer-events: none
+
+light()
+  &.light
+    background-color: lighten(@background-color, $lightening)
+
+#btn-green
+  background-color: $green
+  light()
+
+#btn-red
+  background-color: $red
+  light()
+
+#btn-yellow
+  background-color: $yellow
+  light()
+
+#btn-blue
+  background-color: $blue
+  light()
+
+button[name="start"]
+  background-color: $highlight
+  border: 0
+  border-radius: 10px
+  color: $gameBC
+  cursor: pointer
+  font-family: inherit
+  font-size: 1.25em
+  height: 40px
+  margin: 10px
+  width: 200px
+
+#strict
+  align-items: center
+  display: flex
+  font-size: 1.25em
+  justify-content: space-between
+  width: 200px
+
+.onoffswitch
+  -moz-user-select:none
+  -ms-user-select: none
+  -webkit-user-select:none
+  position: relative
+  width: 66px
+
+.onoffswitch-checkbox
+  display: none
+
+.onoffswitch-label
+  border: 2px solid $highlight
+  border-radius: 10px
+  cursor: pointer
+  display: block
+  overflow: hidden
+
+.onoffswitch-inner
+  display: block
+  margin-left: -100%
+  transition: margin .3s ease-in 0s
+  width: 200%
+
+.onoffswitch-inner:before, .onoffswitch-inner:after
+  box-sizing: border-box
+  color: white
+  display: block
+  float: left
+  font-family: inherit
+  font-size: 12px
+  height: 17px
+  line-height: 17px
+  padding: 0
+  width: 50%
+
+.onoffswitch-inner:before
+  background-color: $green
+  color: white
+  content: "ON"
+  padding-left: 10px
+
+.onoffswitch-inner:after
+  background-color: $red
+  color: white
+  content: "OFF"
+  padding-right: 10px
+  text-align: right
+
+.onoffswitch-switch
+  background: white
+  border: 2px solid $highlight
+  border-radius: 10px
+  bottom: 0
+  display: block
+  margin: 0
+  position: absolute
+  right: 45px
+  top: 0
+  transition: all .3s ease-in 0s
+  width: 17px
+
+.onoffswitch-checkbox:checked + .onoffswitch-label
+  & .onoffswitch-inner
+    margin-left: 0
+
+  & .onoffswitch-switch
+    right: 0
