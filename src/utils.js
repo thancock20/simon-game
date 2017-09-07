@@ -22,3 +22,12 @@ export const getTimeouts = (n, tv) =>
         return tv[3];
     }
   });
+
+/**
+ * # Gets button series for the game
+ * @param  {number} n               Length of returned array
+ * @param  {Array.<string>} buttons Names of buttons
+ * @return {Array.<string>}         Names of buttons in randomized series
+ */
+export const getButtonSeries = (n, buttons) =>
+  [...Array(n)].map(() => buttons[Math.floor(Math.random() / (1 / buttons.length))]);

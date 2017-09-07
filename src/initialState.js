@@ -1,4 +1,5 @@
 import { FINAL_STAGE, BUTTONS } from './constants';
+import { getButtonSeries } from './utils';
 
 /**
  * # A stage of the game
@@ -13,9 +14,9 @@ const currentStage = 1;
 
 /**
  * # Series of correct button presses in order
- * @type {Array.<ButtonPress>} `length` of array should be `FINAL_STAGE`
+ * @return {Array.<ButtonPress>} `length` of array should be `FINAL_STAGE`
  */
-const buttonSeries = []; // TODO: function to fill array with random ButtonPress values
+const buttonSeries = () => getButtonSeries(FINAL_STAGE, Object.keys(BUTTONS));
 
 /**
  * # Index of `buttonSeries` that player needs to press now
@@ -29,9 +30,15 @@ const toTest = 1;
  */
 const isStrict = false;
 
-export default {
-  currentStage,
-  buttonSeries,
-  toTest,
-  isStrict,
-};
+/**
+ * Creates initial State object
+ * @return {Object}
+ */
+export default function () {
+  return {
+    currentStage,
+    buttonSeries: buttonSeries(),
+    toTest,
+    isStrict,
+  };
+}
