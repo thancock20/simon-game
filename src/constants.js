@@ -1,3 +1,5 @@
+import { getTimeouts } from './utils';
+
 /**
  * # The final stage of the game
  * @readonly
@@ -20,29 +22,19 @@ export const WINNING_TEXT = 'YOU WIN!!';
 export const WRONG_TEXT = 'WRONG!!!';
 
 /**
+ * # Timout values for stages
+ * @readonly
+ * @type {Array.<number>}
+ */
+const TIMEOUT_VALUES = [1000, 750, 500, 250];
+
+/**
  * # Timeouts for stages
  * @readonly
- * @param  {Number} n Always {@link FINAL_STAGE} - if changing, do so above
- * @return {Number[]}   Array where _index_ is **stage number** and
- *                                  _value_ is **timeout** in milliseconds
- *                            * 1st fifth of stages have timeout of 1000
- *                            * 2nd fifth of stages have timeout of 750
- *                            * 3rd fifth of stages have timeout of 500
- *                            * rest of stages have timeout of 250
+ * @type {Array.<number>}   Array where _index_ is **stage number** and
+ *                                      _value_ is **timeout** in milliseconds
  */
-export const TIMEOUTS = (n =>
-  [...Array(n)].map((_, i) => {
-    switch (true) {
-      case i < n / 5:
-        return 1000;
-      case i < n * (2 / 5):
-        return 750;
-      case i < n * (3 / 5):
-        return 500;
-      default:
-        return 250;
-    }
-  }))(FINAL_STAGE);
+export const TIMEOUTS = getTimeouts(FINAL_STAGE, TIMEOUT_VALUES);
 
 /**
  * # Paths to sounds used for gameplay
