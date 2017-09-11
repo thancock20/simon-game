@@ -42,11 +42,11 @@ export const TIMEOUTS = getTimeouts(FINAL_STAGE, TIMEOUT_VALUES);
  * @enum {string}
  */
 export const SOUNDS = {
-  blue: './sounds/blue.mp3',
-  green: './sounds/green.mp3',
-  red: './sounds/red.mp3',
-  yellow: './sounds/yellow.mp3',
-  wrong: './sounds/wrong.mp3',
+  blue: './dist/sounds/blue.mp3',
+  green: './dist/sounds/green.mp3',
+  red: './dist/sounds/red.mp3',
+  yellow: './dist/sounds/yellow.mp3',
+  wrong: './dist/sounds/wrong.mp3',
 };
 
 /**

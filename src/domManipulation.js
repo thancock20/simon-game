@@ -1,10 +1,16 @@
 import { BUTTONS, TIMEOUTS } from './constants';
-import { getButtonsWithinCurrent } from './utils';
+import { getButtonsWithinCurrent, iterObj, formatStageNum } from './utils';
+import playSound from './sound';
+
+const element = Id => document.getElementById(Id);
 
 const playButton = timeout => (button, index) => {
   // console.log(BUTTONS[button]);
-  const buttonNode = document.getElementById(BUTTONS[button]);
-  setTimeout(() => buttonNode.classList.add('light'), timeout * index);
+  const buttonNode = element(BUTTONS[button]);
+  setTimeout(() => {
+    buttonNode.classList.add('light');
+    playSound(button);
+  }, timeout * index);
   setTimeout(
     () => buttonNode.classList.remove('light'),
     timeout * (index + 1) - timeout / 5,
@@ -16,12 +22,17 @@ const playButtons = (buttons, timeout) => {
 };
 
 const makeClickable = ID => {
-  const node = document.getElementById(ID);
+  const node = element(ID);
   node.classList.remove('unclickable');
 };
 
 const makeButtonsClickable = () => {
-  Object.values(BUTTONS).forEach(makeClickable);
+  iterObj(BUTTONS, makeClickable);
+};
+
+const showStageMsg = msg => {
+  const stageNode = element('stage');
+  stageNode.innerText = msg;
 };
 
 export const playButtonSeries = state => {
@@ -30,4 +41,6 @@ export const playButtonSeries = state => {
   setTimeout(makeButtonsClickable, timeout);
 };
 
-export const a = 0;
+export const showStage = state => {
+  showStageMsg(`Stage: ${formatStageNum(state.currentStage)}`);
+};

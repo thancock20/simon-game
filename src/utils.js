@@ -58,3 +58,11 @@ export const getButtonsWithinCurrent = state =>
  * @param  {Function} fn
  */
 export const iterObj = (obj, fn) => Object.values(obj).forEach(fn);
+
+/**
+ * # Format stage number, add 0 in front if less than 10
+ * @param  {number} n
+ * @return {string}
+ * @example `formatStageNum(9) === '09'`
+ */
+export const formatStageNum = n => (n < 10 ? '0' : '') + n.toString();

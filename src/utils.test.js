@@ -4,6 +4,7 @@ import {
   setStrict,
   getButtonsWithinCurrent,
   iterObj,
+  formatStageNum,
 } from './utils';
 
 describe('getTimeouts', () => {
@@ -162,6 +163,20 @@ describe('iterObj', () => {
     const fn = el => received.push(el * 2);
     iterObj(obj, fn);
     const expected = [2, 4, 6];
+    expect(received).toEqual(expected);
+  });
+});
+
+describe('formatStageNum', () => {
+  test('Adds 0 in front of 9', () => {
+    const received = formatStageNum(9);
+    const expected = '09';
+    expect(received).toEqual(expected);
+  });
+
+  test('Does not add 0 in front of 10', () => {
+    const received = formatStageNum(10);
+    const expected = '10';
     expect(received).toEqual(expected);
   });
 });
