@@ -1,5 +1,7 @@
 const newMappedArray = (n, fn) => [...Array(n)].map(fn);
 
+const getNewState = (oldState, stateDelta) => Object.assign({}, oldState, stateDelta);
+
 const getTimeout = (n, tv) => (_, i) =>
   (i < n * (1 / 5) ? tv[0] : i < n * (2 / 5) ? tv[1] : i < n * (3 / 5) ? tv[2] : tv[3]);
 
@@ -25,3 +27,11 @@ export const getTimeouts = (n, tv) => newMappedArray(n, getTimeout(n, tv));
  * @return {Array.<string>}         Names of buttons in randomized series
  */
 export const getButtonSeries = (n, buttons) => newMappedArray(n, getRandomButton(buttons));
+
+/**
+ * # Sets isStrict
+ * @param {Object}  oldState
+ * @param {Boolean} isStrict
+ * @return {Object} new State object with isStrict set
+ */
+export const setStrict = (oldState, isStrict) => getNewState(oldState, { isStrict });

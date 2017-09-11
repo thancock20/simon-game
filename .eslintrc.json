@@ -2,7 +2,8 @@
   "extends": ["plugin:jest/recommended", "airbnb-base"],
   "plugins": ["jest"],
   "env": {
-    "jest/globals": true
+    "jest/globals": true,
+    "browser": true
   },
   "rules": {
     "no-nested-ternary": 0
