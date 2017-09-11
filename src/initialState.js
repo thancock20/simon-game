@@ -34,7 +34,7 @@ const isStrict = false;
  * Creates initial State object
  * @return {Object}
  */
-export default function () {
+export default function() {
   return {
     currentStage,
     buttonSeries: buttonSeries(),

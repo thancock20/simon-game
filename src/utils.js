@@ -1,11 +1,17 @@
 const newMappedArray = (n, fn) => [...Array(n)].map(fn);
 
-const getNewState = (oldState, stateDelta) => Object.assign({}, oldState, stateDelta);
+const getNewState = (oldState, stateDelta) =>
+  Object.assign({}, oldState, stateDelta);
 
 const getTimeout = (n, tv) => (_, i) =>
-  (i < n * (1 / 5) ? tv[0] : i < n * (2 / 5) ? tv[1] : i < n * (3 / 5) ? tv[2] : tv[3]);
+  i < n * (1 / 5)
+    ? tv[0]
+    : i < n * (2 / 5) ? tv[1] : i < n * (3 / 5) ? tv[2] : tv[3];
 
-const getRandomButton = buttons => () => buttons[Math.floor(Math.random() / (1 / buttons.length))];
+const getRandomButton = buttons => () =>
+  buttons[Math.floor(Math.random() / (1 / buttons.length))];
+
+const isWithin = limit => (_, i) => i < limit;
 
 /**
  * # Produce timeouts for the stages
@@ -26,7 +32,8 @@ export const getTimeouts = (n, tv) => newMappedArray(n, getTimeout(n, tv));
  * @param  {Array.<string>} buttons Names of buttons
  * @return {Array.<string>}         Names of buttons in randomized series
  */
-export const getButtonSeries = (n, buttons) => newMappedArray(n, getRandomButton(buttons));
+export const getButtonSeries = (n, buttons) =>
+  newMappedArray(n, getRandomButton(buttons));
 
 /**
  * # Sets isStrict
@@ -34,7 +41,8 @@ export const getButtonSeries = (n, buttons) => newMappedArray(n, getRandomButton
  * @param {Boolean} isStrict
  * @return {Object} new State object with isStrict set
  */
-export const setStrict = (oldState, isStrict) => getNewState(oldState, { isStrict });
+export const setStrict = (oldState, isStrict) =>
+  getNewState(oldState, { isStrict });
 
 /**
  * # Get the buttons within the current stage
