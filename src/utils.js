@@ -1,3 +1,10 @@
+const newMappedArray = (n, fn) => [...Array(n)].map(fn);
+
+const getTimeout = (n, tv) => (_, i) =>
+  (i < n * (1 / 5) ? tv[0] : i < n * (2 / 5) ? tv[1] : i < n * (3 / 5) ? tv[2] : tv[3]);
+
+const getRandomButton = buttons => () => buttons[Math.floor(Math.random() / (1 / buttons.length))];
+
 /**
  * # Produce timeouts for the stages
  * @param  {number} n Total number of stages
@@ -9,19 +16,7 @@
  *                                  * 3rd fifth of stages have timeout of tv[2]
  *                                  * rest of stages have timeout of tv[3]
  */
-export const getTimeouts = (n, tv) =>
-  [...Array(n)].map((_, i) => {
-    switch (true) {
-      case i < n / 5:
-        return tv[0];
-      case i < n * (2 / 5):
-        return tv[1];
-      case i < n * (3 / 5):
-        return tv[2];
-      default:
-        return tv[3];
-    }
-  });
+export const getTimeouts = (n, tv) => newMappedArray(n, getTimeout(n, tv));
 
 /**
  * # Gets button series for the game
@@ -29,5 +24,4 @@ export const getTimeouts = (n, tv) =>
  * @param  {Array.<string>} buttons Names of buttons
  * @return {Array.<string>}         Names of buttons in randomized series
  */
-export const getButtonSeries = (n, buttons) =>
-  [...Array(n)].map(() => buttons[Math.floor(Math.random() / (1 / buttons.length))]);
+export const getButtonSeries = (n, buttons) => newMappedArray(n, getRandomButton(buttons));
