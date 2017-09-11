@@ -35,3 +35,18 @@ export const getButtonSeries = (n, buttons) => newMappedArray(n, getRandomButton
  * @return {Object} new State object with isStrict set
  */
 export const setStrict = (oldState, isStrict) => getNewState(oldState, { isStrict });
+
+/**
+ * # Get the buttons within the current stage
+ * @param  {Object} state
+ * @return {Array.<ButtonPress>}  Buttons within the current stage
+ */
+export const getButtonsWithinCurrent = state =>
+  state.buttonSeries.filter(isWithin(state.currentStage));
+
+/**
+ * # Iterates over obj values with fn (used for side effects)
+ * @param  {Object}   obj
+ * @param  {Function} fn
+ */
+export const iterObj = (obj, fn) => Object.values(obj).forEach(fn);

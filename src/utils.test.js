@@ -1,4 +1,10 @@
-import { getTimeouts, getButtonSeries, setStrict } from './utils';
+import {
+  getTimeouts,
+  getButtonSeries,
+  setStrict,
+  getButtonsWithinCurrent,
+  iterObj,
+} from './utils';
 
 describe('getTimeouts', () => {
   test('produces correct array when n is 5', () => {
@@ -90,6 +96,72 @@ describe('setStrict', () => {
       toTest: 1,
       isStrict: false,
     };
+    expect(received).toEqual(expected);
+  });
+});
+
+describe('getButtonsWithinCurrent', () => {
+  test('Gets only first button if currentStage is 1', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 1,
+      isStrict: false,
+    };
+    const received = getButtonsWithinCurrent(state);
+    const expected = ['blue'];
+    expect(received).toEqual(expected);
+  });
+
+  test('Gets two buttons if currentStage is 2', () => {
+    const state = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 1,
+      isStrict: false,
+    };
+    const received = getButtonsWithinCurrent(state);
+    const expected = ['blue', 'green'];
+    expect(received).toEqual(expected);
+  });
+
+  test('Gets all buttons if currentStage is same as length', () => {
+    const state = {
+      currentStage: 4,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 1,
+      isStrict: false,
+    };
+    const received = getButtonsWithinCurrent(state);
+    const expected = state.buttonSeries;
+    expect(received).toEqual(expected);
+  });
+});
+
+describe('iterObj', () => {
+  test('Pushes values to an array', () => {
+    const obj = {
+      a: 'a',
+      b: 'b',
+      c: 'c',
+    };
+    const received = [];
+    const fn = el => received.push(el);
+    iterObj(obj, fn);
+    const expected = ['a', 'b', 'c'];
+    expect(received).toEqual(expected);
+  });
+
+  test('Pushes double of values to an array', () => {
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3,
+    };
+    const received = [];
+    const fn = el => received.push(el * 2);
+    iterObj(obj, fn);
+    const expected = [2, 4, 6];
     expect(received).toEqual(expected);
   });
 });
