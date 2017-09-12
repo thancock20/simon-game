@@ -22,13 +22,19 @@ const buttonSeries = () => getButtonSeries(FINAL_STAGE, Object.keys(BUTTONS));
  * # Index of `buttonSeries` that player needs to press now
  * @type {number} Initial value should be `1`
  */
-const toTest = 1;
+const toTest = 0;
 
 /**
  * # Is game in strict mode
  * @type {Boolean}
  */
 const isStrict = false;
+
+/**
+ * # Is last button press correct
+ * @type {Boolean}
+ */
+const isCorrect = false;
 
 /**
  * Creates initial State object
@@ -40,5 +46,6 @@ export default function() {
     buttonSeries: buttonSeries(),
     toTest,
     isStrict,
+    isCorrect,
   };
 }

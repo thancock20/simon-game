@@ -2,8 +2,17 @@ import 'babel-polyfill';
 
 import initialState from './initialState';
 
-import { setStrict } from './utils';
-import { playButtonSeries, showStage } from './domManipulation';
+import { FINAL_STAGE } from './constants';
+import { setStrict, testButtonPress, advanceState, wrongState } from './utils';
+import {
+  playButtonSeries,
+  showStage,
+  buttonPressed,
+  buttonUnpressed,
+  advanceDom,
+  wrongDom,
+  gameWon,
+} from './domManipulation';
 
 let state = {};
 
@@ -22,3 +31,33 @@ function handleStartButton() {
 
 const startButton = document.querySelector('#btn-start');
 startButton.addEventListener('click', handleStartButton);
+
+function handleSimonButtonsUp(event) {
+  event.target.removeEventListener('mouseup', handleSimonButtonsUp);
+  event.target.removeEventListener('mouseout', handleSimonButtonsUp);
+  buttonUnpressed(event.target.id);
+  state = testButtonPress(event.target.id, state);
+  if (state.isCorrect) {
+    state = advanceState(state);
+    if (state.currentStage > FINAL_STAGE) {
+      gameWon();
+      return;
+    }
+    advanceDom(state);
+    if (state.toTest === 0) setTimeout(() => playButtonSeries(state), 500);
+    return;
+  }
+  state = wrongState(state);
+  wrongDom(state);
+  setTimeout(() => playButtonSeries(state), 2000);
+}
+
+function handleSimonButtonsDown(event) {
+  if (event.target.className !== 'simon-button') return;
+  event.target.addEventListener('mouseup', handleSimonButtonsUp);
+  event.target.addEventListener('mouseout', handleSimonButtonsUp);
+  buttonPressed(event.target.id);
+}
+
+const simonButtons = document.querySelector('#simon-buttons');
+simonButtons.addEventListener('mousedown', handleSimonButtonsDown);

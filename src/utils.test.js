@@ -5,6 +5,9 @@ import {
   getButtonsWithinCurrent,
   iterObj,
   formatStageNum,
+  testButtonPress,
+  advanceState,
+  wrongState,
 } from './utils';
 
 describe('getTimeouts', () => {
@@ -57,10 +60,11 @@ describe('setStrict', () => {
     const state = {
       currentStage: 1,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: false,
+      isCorrect: true,
     };
-    const expected = state;
+    const expected = Object.assign({}, state);
     setStrict(state, true);
     const received = state;
     expect(received).toEqual(expected);
@@ -70,15 +74,17 @@ describe('setStrict', () => {
     const state = {
       currentStage: 1,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: false,
+      isCorrect: true,
     };
     const received = setStrict(state, true);
     const expected = {
       currentStage: 1,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: true,
+      isCorrect: true,
     };
     expect(received).toEqual(expected);
   });
@@ -87,15 +93,17 @@ describe('setStrict', () => {
     const state = {
       currentStage: 1,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: true,
+      isCorrect: true,
     };
     const received = setStrict(state, false);
     const expected = {
       currentStage: 1,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: false,
+      isCorrect: true,
     };
     expect(received).toEqual(expected);
   });
@@ -106,8 +114,9 @@ describe('getButtonsWithinCurrent', () => {
     const state = {
       currentStage: 1,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: false,
+      isCorrect: true,
     };
     const received = getButtonsWithinCurrent(state);
     const expected = ['blue'];
@@ -118,8 +127,9 @@ describe('getButtonsWithinCurrent', () => {
     const state = {
       currentStage: 2,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: false,
+      isCorrect: true,
     };
     const received = getButtonsWithinCurrent(state);
     const expected = ['blue', 'green'];
@@ -130,8 +140,9 @@ describe('getButtonsWithinCurrent', () => {
     const state = {
       currentStage: 4,
       buttonSeries: ['blue', 'green', 'red', 'yellow'],
-      toTest: 1,
+      toTest: 0,
       isStrict: false,
+      isCorrect: true,
     };
     const received = getButtonsWithinCurrent(state);
     const expected = state.buttonSeries;
@@ -177,6 +188,162 @@ describe('formatStageNum', () => {
   test('Does not add 0 in front of 10', () => {
     const received = formatStageNum(10);
     const expected = '10';
+    expect(received).toEqual(expected);
+  });
+});
+
+describe('testButtonPress', () => {
+  test('Does not mutate state', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    const expected = Object.assign({}, state);
+    testButtonPress('btn-blue', state);
+    const received = state;
+    expect(received).toEqual(expected);
+  });
+
+  test('Changes to true if correct button pressed', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    const received = testButtonPress('btn-blue', state);
+    const expected = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    expect(received).toEqual(expected);
+  });
+
+  test('Changes to false if incorrect button pressed', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    const received = testButtonPress('btn-red', state);
+    const expected = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    expect(received).toEqual(expected);
+  });
+});
+
+describe('advanceState', () => {
+  test('Does not mutate state', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    const expected = Object.assign({}, state);
+    advanceState(state);
+    const received = state;
+    expect(received).toEqual(expected);
+  });
+
+  test('Adds one to toTest if series not complete', () => {
+    const state = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    const received = advanceState(state);
+    const expected = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 1,
+      isStrict: false,
+      isCorrect: true,
+    };
+    expect(received).toEqual(expected);
+  });
+
+  test('Adds one to currentStage and sets toTest to zero if complete', () => {
+    const state = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 1,
+      isStrict: false,
+      isCorrect: true,
+    };
+    const received = advanceState(state);
+    const expected = {
+      currentStage: 3,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    expect(received).toEqual(expected);
+  });
+});
+
+describe('wrongState', () => {
+  test('Does not mutate state', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    const expected = Object.assign({}, state);
+    wrongState(state);
+    const received = state;
+    expect(received).toEqual(expected);
+  });
+
+  test('Keeps toTest at zero', () => {
+    const state = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    const received = wrongState(state);
+    const expected = state;
+    expect(received).toEqual(expected);
+  });
+
+  test('Resets toTest to zero', () => {
+    const state = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 1,
+      isStrict: false,
+      isCorrect: false,
+    };
+    const received = wrongState(state);
+    const expected = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
     expect(received).toEqual(expected);
   });
 });

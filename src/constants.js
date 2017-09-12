@@ -22,6 +22,12 @@ export const WINNING_TEXT = 'YOU WIN!!';
 export const WRONG_TEXT = 'WRONG!!!';
 
 /**
+ * # Time the game waits for the player to press a button
+ * @type {Number}
+ */
+export const TIMEOUT_WAIT = 3000;
+
+/**
  * # Timout values for stages
  * @readonly
  * @type {Array.<number>}
@@ -47,6 +53,7 @@ export const SOUNDS = {
   red: './dist/sounds/red.mp3',
   yellow: './dist/sounds/yellow.mp3',
   wrong: './dist/sounds/wrong.mp3',
+  win: './dist/sounds/win.mp3',
 };
 
 /**

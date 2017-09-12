@@ -66,3 +66,37 @@ export const iterObj = (obj, fn) => Object.values(obj).forEach(fn);
  * @example `formatStageNum(9) === '09'`
  */
 export const formatStageNum = n => (n < 10 ? '0' : '') + n.toString();
+
+/**
+ * # Set state.isCorrect to true if correct button pushed
+ * @param  {string} id    ID of pushed button
+ * @param  {object} state
+ * @return {object}
+ */
+export const testButtonPress = (id, oldState) =>
+  getNewState(oldState, {
+    isCorrect: id.slice(4) === oldState.buttonSeries[oldState.toTest],
+  });
+
+/**
+ * # Return new state for correct button pressed
+ * @param  {object} oldState
+ * @return {object}
+ */
+export const advanceState = oldState =>
+  getNewState(
+    oldState,
+    oldState.toTest + 1 === oldState.currentStage
+      ? {
+          currentStage: oldState.currentStage + 1,
+          toTest: 0,
+        }
+      : { toTest: oldState.toTest + 1 },
+  );
+
+/**
+ * # Return new state for wrong button pressed
+ * @param  {object} oldState
+ * @return {object}
+ */
+export const wrongState = oldState => getNewState(oldState, { toTest: 0 });
