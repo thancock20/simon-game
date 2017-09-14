@@ -8,7 +8,8 @@
     "test:watch": "npm test -- --notify --watch",
     "build": "webpack",
     "start": "webpack-dev-server",
-    "stylus": "stylus -w ./src/main.styl -o ./dist/styles.css"
+    "stylus": "stylus -w ./src/main.styl -o ./dist/styles.css",
+    "precommit": "npm test"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "eslint-config-prettier": "^2.4.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jest": "^21.0.0",
+    "husky": "^0.14.3",
     "jest": "^21.0.1",
     "stylus": "^0.54.5",
     "webpack": "^3.5.1",
