@@ -8,5 +8,5 @@ Object.entries(SOUNDS).forEach(sound => {
 });
 
 export default sound => {
-  sounds[sound].play();
+  // sounds[sound].play();
 };

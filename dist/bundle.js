@@ -9583,7 +9583,7 @@ Object.entries(_constants.SOUNDS).forEach(function (sound) {
 });
 
 exports.default = function (sound) {
-  sounds[sound].play();
+  // sounds[sound].play();
 };
 
 /***/ }),
