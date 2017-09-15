@@ -22,16 +22,20 @@ const makeUnclickable = id => addClassTo(id, 'unclickable');
 
 const makeButtonsUnclickable = () => iterObj(BUTTONS, makeUnclickable);
 
+const makeLit = id => addClassTo(id, 'light');
+
+const makeUnlit = id => removeClassFrom(id, 'light');
+
 const playButton = (button, buttons, timeout) => {
   if (!button) {
     makeButtonsClickable();
     return;
   }
   const buttonID = BUTTONS[button];
-  addClassTo(buttonID, 'light');
+  makeLit(buttonID);
   playSound(button);
   setTimeout(() => {
-    removeClassFrom(buttonID, 'light');
+    makeUnlit(buttonID);
     setTimeout(
       () => playButtons(buttons, timeout), // eslint-disable-line no-use-before-define
       150,
@@ -58,13 +62,12 @@ export const playButtonSeries = state => {
 };
 
 export const buttonPressed = id => {
-  addClassTo(id, 'light');
-  const button = id.slice(4);
-  playSound(button);
+  makeLit(id);
+  playSound(id.slice(4));
 };
 
 export const buttonUnpressed = id => {
-  removeClassFrom(id, 'light');
+  makeUnlit(id);
 };
 
 export const showStage = state => {

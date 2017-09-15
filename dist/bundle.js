@@ -9481,16 +9481,24 @@ var makeButtonsUnclickable = function makeButtonsUnclickable() {
   return (0, _utils.iterObj)(_constants.BUTTONS, makeUnclickable);
 };
 
+var makeLit = function makeLit(id) {
+  return addClassTo(id, 'light');
+};
+
+var makeUnlit = function makeUnlit(id) {
+  return removeClassFrom(id, 'light');
+};
+
 var playButton = function playButton(button, buttons, timeout) {
   if (!button) {
     makeButtonsClickable();
     return;
   }
   var buttonID = _constants.BUTTONS[button];
-  addClassTo(buttonID, 'light');
+  makeLit(buttonID);
   (0, _sound2.default)(button);
   setTimeout(function () {
-    removeClassFrom(buttonID, 'light');
+    makeUnlit(buttonID);
     setTimeout(function () {
       return playButtons(buttons, timeout);
     }, // eslint-disable-line no-use-before-define
@@ -9521,13 +9529,12 @@ var playButtonSeries = exports.playButtonSeries = function playButtonSeries(stat
 };
 
 var buttonPressed = exports.buttonPressed = function buttonPressed(id) {
-  addClassTo(id, 'light');
-  var button = id.slice(4);
-  (0, _sound2.default)(button);
+  makeLit(id);
+  (0, _sound2.default)(id.slice(4));
 };
 
 var buttonUnpressed = exports.buttonUnpressed = function buttonUnpressed(id) {
-  removeClassFrom(id, 'light');
+  makeUnlit(id);
 };
 
 var showStage = exports.showStage = function showStage(state) {
