@@ -23,7 +23,7 @@ describe('getTimeouts', () => {
     expect(received).toEqual(expected);
   });
 
-  test('produces correct array with different tm', () => {
+  test('produces correct array with different tv', () => {
     const received = getTimeouts(5, [1, 2, 3, 4]);
     const expected = [1, 2, 3, 4, 4];
     expect(received).toEqual(expected);
@@ -47,10 +47,13 @@ describe('getButtonSeries', () => {
       .mockReturnValueOnce(0.25)
       .mockReturnValueOnce(0.5)
       .mockReturnValueOnce(0.75)
-      .mockReturnValueOnce(0.24);
+      .mockReturnValueOnce(0.24)
+      .mockReturnValueOnce(0.49)
+      .mockReturnValueOnce(0.74)
+      .mockReturnValueOnce(0.99);
     global.Math.random = mockRandom;
-    const received = getButtonSeries(5, ['a', 'b', 'c', 'd']);
-    const expected = ['a', 'b', 'c', 'd', 'a'];
+    const received = getButtonSeries(8, ['a', 'b', 'c', 'd']);
+    const expected = ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'];
     expect(received).toEqual(expected);
   });
 });
@@ -110,6 +113,20 @@ describe('setStrict', () => {
 });
 
 describe('getButtonsWithinCurrent', () => {
+  test('Does not mutate state', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    const expected = Object.assign({}, state);
+    getButtonsWithinCurrent(state);
+    const received = state;
+    expect(received).toEqual(expected);
+  });
+
   test('Gets only first button if currentStage is 1', () => {
     const state = {
       currentStage: 1,
@@ -151,6 +168,19 @@ describe('getButtonsWithinCurrent', () => {
 });
 
 describe('iterObj', () => {
+  test('Does not mutate obj', () => {
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3,
+    };
+    const expected = Object.assign({}, obj);
+    const fn = el => el * 2;
+    iterObj(obj, fn);
+    const received = obj;
+    expect(received).toEqual(expected);
+  });
+
   test('Pushes values to an array', () => {
     const obj = {
       a: 'a',
@@ -233,6 +263,44 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+    };
+    const received = testButtonPress('btn-red', state);
+    const expected = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+    };
+    expect(received).toEqual(expected);
+  });
+
+  test('Stays true if correct button pressed', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    const received = testButtonPress('btn-blue', state);
+    const expected = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: true,
+    };
+    expect(received).toEqual(expected);
+  });
+
+  test('Stays false if incorrect button pressed', () => {
+    const state = {
+      currentStage: 1,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
     };
     const received = testButtonPress('btn-red', state);
     const expected = {
