@@ -6,7 +6,10 @@ import {
   WINNING_TEXT,
 } from './constants';
 import { getButtonsWithinCurrent, iterObj, formatStageNum } from './utils';
+import { wrongButtonPressed } from './index';
 import playSound from './sound';
+
+let timeoutWaitId;
 
 const element = id => document.getElementById(id);
 
@@ -29,6 +32,7 @@ const makeUnlit = id => removeClassFrom(id, 'light');
 const playButton = (button, buttons, timeout) => {
   if (!button) {
     makeButtonsClickable();
+    timeoutWaitId = setTimeout(wrongButtonPressed, TIMEOUT_WAIT);
     return;
   }
   const buttonID = BUTTONS[button];
@@ -64,6 +68,7 @@ export const playButtonSeries = state => {
 export const buttonPressed = id => {
   makeLit(id);
   playSound(id.slice(4));
+  clearTimeout(timeoutWaitId);
 };
 
 export const buttonUnpressed = id => {
@@ -76,6 +81,7 @@ export const showStage = state => {
 
 export const advanceDom = state => {
   if (state.toTest === 0) makeButtonsUnclickable();
+  else timeoutWaitId = setTimeout(wrongButtonPressed, TIMEOUT_WAIT);
   showStage(state);
 };
 

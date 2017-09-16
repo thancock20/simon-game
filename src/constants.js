@@ -19,7 +19,7 @@ export const WINNING_TEXT = 'YOU WIN!!';
  * @readonly
  * @type {String}
  */
-export const WRONG_TEXT = 'WRONG!!!';
+export const WRONG_TEXT = 'TOO BAD!!';
 
 /**
  * # Time the game waits for the player to press a button

@@ -32,24 +32,30 @@ function handleStartButton() {
 const startButton = document.querySelector('#btn-start');
 startButton.addEventListener('click', handleStartButton);
 
+// eslint-disable-next-line import/prefer-default-export
+export function wrongButtonPressed() {
+  state = wrongState(state);
+  wrongDom(state);
+  setTimeout(() => playButtonSeries(state), 2000);
+}
+
+function correctButtonPressed() {
+  state = advanceState(state);
+  if (state.currentStage > FINAL_STAGE) {
+    gameWon();
+    return;
+  }
+  advanceDom(state);
+  if (state.toTest === 0) setTimeout(() => playButtonSeries(state), 500);
+}
+
 function handleSimonButtonsUp(event) {
   event.target.removeEventListener('mouseup', handleSimonButtonsUp);
   event.target.removeEventListener('mouseout', handleSimonButtonsUp);
   buttonUnpressed(event.target.id);
   state = testButtonPress(event.target.id, state);
-  if (state.isCorrect) {
-    state = advanceState(state);
-    if (state.currentStage > FINAL_STAGE) {
-      gameWon();
-      return;
-    }
-    advanceDom(state);
-    if (state.toTest === 0) setTimeout(() => playButtonSeries(state), 500);
-    return;
-  }
-  state = wrongState(state);
-  wrongDom(state);
-  setTimeout(() => playButtonSeries(state), 2000);
+  if (state.isCorrect) correctButtonPressed();
+  else wrongButtonPressed();
 }
 
 function handleSimonButtonsDown(event) {
