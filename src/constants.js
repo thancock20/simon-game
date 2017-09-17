@@ -1,4 +1,4 @@
-import { getTimeouts } from './utils';
+import { getDurations } from './utils';
 
 /**
  * # The final stage of the game
@@ -22,25 +22,20 @@ export const WINNING_TEXT = 'YOU WIN!!';
 export const WRONG_TEXT = 'TOO BAD!!';
 
 /**
- * # Time the game waits for the player to press a button
- * @type {Number}
- */
-export const TIMEOUT_WAIT = 3000;
-
-/**
- * # Timout values for stages
+ * # Duration values for stages
  * @readonly
  * @type {Array.<number>}
+ *
  */
-const TIMEOUT_VALUES = [1000, 750, 500, 250];
+const DURATION_VALUES = [520, 420, 320, 220];
 
-/**
- * # Timeouts for stages
- * @readonly
- * @type {Array.<number>}   Array where _index_ is **stage number** and
- *                                      _value_ is **timeout** in milliseconds
- */
-export const TIMEOUTS = getTimeouts(FINAL_STAGE, TIMEOUT_VALUES);
+export const TIMING = {
+  before: 800,
+  between: 50,
+  wait: 3000,
+  wrong: 1500,
+  durations: getDurations(FINAL_STAGE, DURATION_VALUES),
+};
 
 /**
  * # Paths to sounds used for gameplay

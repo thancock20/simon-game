@@ -1,10 +1,4 @@
-import {
-  BUTTONS,
-  TIMEOUT_WAIT,
-  TIMEOUTS,
-  WRONG_TEXT,
-  WINNING_TEXT,
-} from './constants';
+import { BUTTONS, TIMING, WRONG_TEXT, WINNING_TEXT } from './constants';
 import { getButtonsWithinCurrent, iterObj, formatStageNum } from './utils';
 import { wrongButtonPressed } from './index';
 import playSound from './sound';
@@ -29,10 +23,16 @@ const makeLit = id => addClassTo(id, 'light');
 
 const makeUnlit = id => removeClassFrom(id, 'light');
 
-const playButton = (button, buttons, timeout) => {
+const setTimeoutWait = () => {
+  timeoutWaitId = setTimeout(wrongButtonPressed, TIMING.wait);
+};
+
+export const clearTimeoutWait = () => clearTimeout(timeoutWaitId);
+
+const playButton = (button, buttons, duration) => {
   if (!button) {
     makeButtonsClickable();
-    timeoutWaitId = setTimeout(wrongButtonPressed, TIMEOUT_WAIT);
+    setTimeoutWait();
     return;
   }
   const buttonID = BUTTONS[button];
@@ -41,15 +41,15 @@ const playButton = (button, buttons, timeout) => {
   setTimeout(() => {
     makeUnlit(buttonID);
     setTimeout(
-      () => playButtons(buttons, timeout), // eslint-disable-line no-use-before-define
-      150,
+      () => playButtons(buttons, duration), // eslint-disable-line no-use-before-define
+      TIMING.between,
     );
-  }, timeout);
+  }, duration);
 };
 
-const playButtons = (buttons, timeout) => {
+const playButtons = (buttons, duration) => {
   const [head, ...tail] = buttons;
-  playButton(head, tail, timeout);
+  playButton(head, tail, duration);
 };
 
 const showStageMsg = msg => {
@@ -61,14 +61,13 @@ const startOver = () =>
   element('btn-start').dispatchEvent(new MouseEvent('click'));
 
 export const playButtonSeries = state => {
-  const timeout = TIMEOUTS[state.currentStage - 1];
-  playButtons(getButtonsWithinCurrent(state), timeout);
+  const duration = TIMING.durations[state.currentStage - 1];
+  playButtons(getButtonsWithinCurrent(state), duration);
 };
 
 export const buttonPressed = id => {
   makeLit(id);
   playSound(id.slice(4));
-  clearTimeout(timeoutWaitId);
 };
 
 export const buttonUnpressed = id => {
@@ -80,8 +79,10 @@ export const showStage = state => {
 };
 
 export const advanceDom = state => {
-  if (state.toTest === 0) makeButtonsUnclickable();
-  else timeoutWaitId = setTimeout(wrongButtonPressed, TIMEOUT_WAIT);
+  if (state.toTest === 0) {
+    makeButtonsUnclickable();
+    setTimeout(() => playButtonSeries(state), TIMING.before);
+  } else setTimeoutWait();
   showStage(state);
 };
 
@@ -94,8 +95,9 @@ export const wrongDom = state => {
       startOver();
     } else {
       showStage(state);
+      playButtonSeries(state);
     }
-  }, 2000);
+  }, TIMING.wrong);
 };
 
 export const gameWon = () => {

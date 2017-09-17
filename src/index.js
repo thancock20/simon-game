@@ -5,6 +5,7 @@ import initialState from './initialState';
 import { FINAL_STAGE } from './constants';
 import { setStrict, testButtonPress, advanceState, wrongState } from './utils';
 import {
+  clearTimeoutWait,
   playButtonSeries,
   showStage,
   buttonPressed,
@@ -24,6 +25,7 @@ const strictSwitch = document.querySelector('#myonoffswitch');
 strictSwitch.addEventListener('change', handleStrictSwitch);
 
 function handleStartButton() {
+  clearTimeoutWait();
   state = setStrict(initialState(), strictSwitch.checked);
   showStage(state);
   playButtonSeries(state);
@@ -36,17 +38,12 @@ startButton.addEventListener('click', handleStartButton);
 export function wrongButtonPressed() {
   state = wrongState(state);
   wrongDom(state);
-  setTimeout(() => playButtonSeries(state), 2000);
 }
 
 function correctButtonPressed() {
   state = advanceState(state);
-  if (state.currentStage > FINAL_STAGE) {
-    gameWon();
-    return;
-  }
-  advanceDom(state);
-  if (state.toTest === 0) setTimeout(() => playButtonSeries(state), 500);
+  if (state.currentStage > FINAL_STAGE) gameWon();
+  else advanceDom(state);
 }
 
 function handleSimonButtonsUp(event) {
@@ -60,6 +57,7 @@ function handleSimonButtonsUp(event) {
 
 function handleSimonButtonsDown(event) {
   if (event.target.className !== 'simon-button') return;
+  clearTimeoutWait();
   event.target.addEventListener('mouseup', handleSimonButtonsUp);
   event.target.addEventListener('mouseout', handleSimonButtonsUp);
   buttonPressed(event.target.id);

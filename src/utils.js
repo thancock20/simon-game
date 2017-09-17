@@ -16,15 +16,15 @@ const isWithin = limit => (_, i) => i < limit;
 /**
  * # Produce timeouts for the stages
  * @param  {number} n Total number of stages
- * @param  {Array.<number>} tv Timeout values
+ * @param  {Array.<number>} dv Duration values
  * @return {Array.<number>}   Array where _index_ is **stage number** and
- *                                        _value_ is **timeout** in milliseconds
- *                                  * 1st fifth of stages have timeout of tv[0]
- *                                  * 2nd fifth of stages have timeout of tv[1]
- *                                  * 3rd fifth of stages have timeout of tv[2]
- *                                  * rest of stages have timeout of tv[3]
+ *                                        _value_ is **duration** in milliseconds
+ *                                  * 1st fifth of stages have timeout of dv[0]
+ *                                  * 2nd fifth of stages have timeout of dv[1]
+ *                                  * 3rd fifth of stages have timeout of dv[2]
+ *                                  * rest of stages have timeout of dv[3]
  */
-export const getTimeouts = (n, tv) => newMappedArray(n, getTimeout(n, tv));
+export const getDurations = (n, dv) => newMappedArray(n, getTimeout(n, dv));
 
 /**
  * # Gets button series for the game

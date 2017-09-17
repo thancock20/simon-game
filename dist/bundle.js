@@ -1867,7 +1867,7 @@ module.exports = function (COLLECTION) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.BUTTONS = exports.SOUNDS = exports.TIMEOUTS = exports.TIMEOUT_WAIT = exports.WRONG_TEXT = exports.WINNING_TEXT = exports.FINAL_STAGE = undefined;
+exports.BUTTONS = exports.SOUNDS = exports.TIMING = exports.WRONG_TEXT = exports.WINNING_TEXT = exports.FINAL_STAGE = undefined;
 
 var _utils = __webpack_require__(65);
 
@@ -1893,25 +1893,20 @@ var WINNING_TEXT = exports.WINNING_TEXT = 'YOU WIN!!';
 var WRONG_TEXT = exports.WRONG_TEXT = 'TOO BAD!!';
 
 /**
- * # Time the game waits for the player to press a button
- * @type {Number}
- */
-var TIMEOUT_WAIT = exports.TIMEOUT_WAIT = 3000;
-
-/**
- * # Timout values for stages
+ * # Duration values for stages
  * @readonly
  * @type {Array.<number>}
+ *
  */
-var TIMEOUT_VALUES = [1000, 750, 500, 250];
+var DURATION_VALUES = [520, 420, 320, 220];
 
-/**
- * # Timeouts for stages
- * @readonly
- * @type {Array.<number>}   Array where _index_ is **stage number** and
- *                                      _value_ is **timeout** in milliseconds
- */
-var TIMEOUTS = exports.TIMEOUTS = (0, _utils.getTimeouts)(FINAL_STAGE, TIMEOUT_VALUES);
+var TIMING = exports.TIMING = {
+  before: 800,
+  between: 50,
+  wait: 3000,
+  wrong: 1500,
+  durations: (0, _utils.getDurations)(FINAL_STAGE, DURATION_VALUES)
+};
 
 /**
  * # Paths to sounds used for gameplay
@@ -1987,16 +1982,16 @@ var isWithin = function isWithin(limit) {
 /**
  * # Produce timeouts for the stages
  * @param  {number} n Total number of stages
- * @param  {Array.<number>} tv Timeout values
+ * @param  {Array.<number>} dv Duration values
  * @return {Array.<number>}   Array where _index_ is **stage number** and
- *                                        _value_ is **timeout** in milliseconds
- *                                  * 1st fifth of stages have timeout of tv[0]
- *                                  * 2nd fifth of stages have timeout of tv[1]
- *                                  * 3rd fifth of stages have timeout of tv[2]
- *                                  * rest of stages have timeout of tv[3]
+ *                                        _value_ is **duration** in milliseconds
+ *                                  * 1st fifth of stages have timeout of dv[0]
+ *                                  * 2nd fifth of stages have timeout of dv[1]
+ *                                  * 3rd fifth of stages have timeout of dv[2]
+ *                                  * rest of stages have timeout of dv[3]
  */
-var getTimeouts = exports.getTimeouts = function getTimeouts(n, tv) {
-  return newMappedArray(n, getTimeout(n, tv));
+var getDurations = exports.getDurations = function getDurations(n, dv) {
+  return newMappedArray(n, getTimeout(n, dv));
 };
 
 /**
@@ -3015,6 +3010,7 @@ var strictSwitch = document.querySelector('#myonoffswitch');
 strictSwitch.addEventListener('change', handleStrictSwitch);
 
 function handleStartButton() {
+  (0, _domManipulation.clearTimeoutWait)();
   state = (0, _utils.setStrict)((0, _initialState2.default)(), strictSwitch.checked);
   (0, _domManipulation.showStage)(state);
   (0, _domManipulation.playButtonSeries)(state);
@@ -3027,21 +3023,11 @@ startButton.addEventListener('click', handleStartButton);
 function wrongButtonPressed() {
   state = (0, _utils.wrongState)(state);
   (0, _domManipulation.wrongDom)(state);
-  setTimeout(function () {
-    return (0, _domManipulation.playButtonSeries)(state);
-  }, 2000);
 }
 
 function correctButtonPressed() {
   state = (0, _utils.advanceState)(state);
-  if (state.currentStage > _constants.FINAL_STAGE) {
-    (0, _domManipulation.gameWon)();
-    return;
-  }
-  (0, _domManipulation.advanceDom)(state);
-  if (state.toTest === 0) setTimeout(function () {
-    return (0, _domManipulation.playButtonSeries)(state);
-  }, 500);
+  if (state.currentStage > _constants.FINAL_STAGE) (0, _domManipulation.gameWon)();else (0, _domManipulation.advanceDom)(state);
 }
 
 function handleSimonButtonsUp(event) {
@@ -3054,6 +3040,7 @@ function handleSimonButtonsUp(event) {
 
 function handleSimonButtonsDown(event) {
   if (event.target.className !== 'simon-button') return;
+  (0, _domManipulation.clearTimeoutWait)();
   event.target.addEventListener('mouseup', handleSimonButtonsUp);
   event.target.addEventListener('mouseout', handleSimonButtonsUp);
   (0, _domManipulation.buttonPressed)(event.target.id);
@@ -9449,7 +9436,7 @@ var isCorrect = false;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameWon = exports.wrongDom = exports.advanceDom = exports.showStage = exports.buttonUnpressed = exports.buttonPressed = exports.playButtonSeries = undefined;
+exports.gameWon = exports.wrongDom = exports.advanceDom = exports.showStage = exports.buttonUnpressed = exports.buttonPressed = exports.playButtonSeries = exports.clearTimeoutWait = undefined;
 
 var _constants = __webpack_require__(64);
 
@@ -9503,10 +9490,18 @@ var makeUnlit = function makeUnlit(id) {
   return removeClassFrom(id, 'light');
 };
 
-var playButton = function playButton(button, buttons, timeout) {
+var setTimeoutWait = function setTimeoutWait() {
+  timeoutWaitId = setTimeout(_index.wrongButtonPressed, _constants.TIMING.wait);
+};
+
+var clearTimeoutWait = exports.clearTimeoutWait = function clearTimeoutWait() {
+  return clearTimeout(timeoutWaitId);
+};
+
+var playButton = function playButton(button, buttons, duration) {
   if (!button) {
     makeButtonsClickable();
-    timeoutWaitId = setTimeout(_index.wrongButtonPressed, _constants.TIMEOUT_WAIT);
+    setTimeoutWait();
     return;
   }
   var buttonID = _constants.BUTTONS[button];
@@ -9515,18 +9510,18 @@ var playButton = function playButton(button, buttons, timeout) {
   setTimeout(function () {
     makeUnlit(buttonID);
     setTimeout(function () {
-      return playButtons(buttons, timeout);
+      return playButtons(buttons, duration);
     }, // eslint-disable-line no-use-before-define
-    150);
-  }, timeout);
+    _constants.TIMING.between);
+  }, duration);
 };
 
-var playButtons = function playButtons(buttons, timeout) {
+var playButtons = function playButtons(buttons, duration) {
   var _buttons = _toArray(buttons),
       head = _buttons[0],
       tail = _buttons.slice(1);
 
-  playButton(head, tail, timeout);
+  playButton(head, tail, duration);
 };
 
 var showStageMsg = function showStageMsg(msg) {
@@ -9539,14 +9534,13 @@ var startOver = function startOver() {
 };
 
 var playButtonSeries = exports.playButtonSeries = function playButtonSeries(state) {
-  var timeout = _constants.TIMEOUTS[state.currentStage - 1];
-  playButtons((0, _utils.getButtonsWithinCurrent)(state), timeout);
+  var duration = _constants.TIMING.durations[state.currentStage - 1];
+  playButtons((0, _utils.getButtonsWithinCurrent)(state), duration);
 };
 
 var buttonPressed = exports.buttonPressed = function buttonPressed(id) {
   makeLit(id);
   (0, _sound2.default)(id.slice(4));
-  clearTimeout(timeoutWaitId);
 };
 
 var buttonUnpressed = exports.buttonUnpressed = function buttonUnpressed(id) {
@@ -9558,7 +9552,12 @@ var showStage = exports.showStage = function showStage(state) {
 };
 
 var advanceDom = exports.advanceDom = function advanceDom(state) {
-  if (state.toTest === 0) makeButtonsUnclickable();else timeoutWaitId = setTimeout(_index.wrongButtonPressed, _constants.TIMEOUT_WAIT);
+  if (state.toTest === 0) {
+    makeButtonsUnclickable();
+    setTimeout(function () {
+      return playButtonSeries(state);
+    }, _constants.TIMING.before);
+  } else setTimeoutWait();
   showStage(state);
 };
 
@@ -9571,8 +9570,9 @@ var wrongDom = exports.wrongDom = function wrongDom(state) {
       startOver();
     } else {
       showStage(state);
+      playButtonSeries(state);
     }
-  }, 2000);
+  }, _constants.TIMING.wrong);
 };
 
 var gameWon = exports.gameWon = function gameWon() {
