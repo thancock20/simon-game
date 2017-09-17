@@ -43,12 +43,12 @@ export const TIMING = {
  * @enum {string}
  */
 export const SOUNDS = {
-  blue: './dist/sounds/blue.mp3',
-  green: './dist/sounds/green.mp3',
-  red: './dist/sounds/red.mp3',
-  yellow: './dist/sounds/yellow.mp3',
-  wrong: './dist/sounds/wrong.mp3',
-  win: './dist/sounds/win.mp3',
+  blue: 329.63,
+  green: 164.81,
+  red: 220.0,
+  yellow: 277.18,
+  wrong: 42,
+  win: 'TODO',
 };
 
 /**
