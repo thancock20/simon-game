@@ -23,6 +23,11 @@ const makeLit = id => addClassTo(id, 'light');
 
 const makeUnlit = id => removeClassFrom(id, 'light');
 
+const twice = fn => {
+  fn();
+  fn();
+};
+
 const setTimeoutWait = () => {
   timeoutWaitId = setTimeout(wrongButtonPressed, TIMING.wait);
 };
@@ -57,8 +62,17 @@ const showStageMsg = msg => {
   stageNode.innerText = msg;
 };
 
-const startOver = () =>
+const showStartMsg = msg => {
+  const startNode = element('btn-start');
+  startNode.innerText = msg;
+};
+
+const pressStart = () =>
   element('btn-start').dispatchEvent(new MouseEvent('click'));
+
+const startOver = () => {
+  twice(pressStart);
+};
 
 export const playButtonSeries = state => {
   const duration = TIMING.durations[state.currentStage - 1];
@@ -78,6 +92,18 @@ export const showStage = state => {
   showStageMsg(`Stage: ${formatStageNum(state.currentStage)}`);
 };
 
+export const gameStarted = state => {
+  showStage(state);
+  showStartMsg('Stop');
+  playButtonSeries(state);
+};
+
+export const gameStopped = () => {
+  makeButtonsUnclickable();
+  showStageMsg('Stage: --');
+  showStartMsg('Start');
+};
+
 export const advanceDom = state => {
   if (state.toTest === 0) {
     makeButtonsUnclickable();
@@ -94,8 +120,7 @@ export const wrongDom = state => {
     if (state.isStrict) {
       startOver();
     } else {
-      showStage(state);
-      playButtonSeries(state);
+      gameStarted(state);
     }
   }, TIMING.wrong);
 };

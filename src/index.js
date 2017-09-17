@@ -6,16 +6,16 @@ import { FINAL_STAGE } from './constants';
 import { setStrict, testButtonPress, advanceState, wrongState } from './utils';
 import {
   clearTimeoutWait,
-  playButtonSeries,
-  showStage,
   buttonPressed,
   buttonUnpressed,
   advanceDom,
   wrongDom,
   gameWon,
+  gameStarted,
+  gameStopped,
 } from './domManipulation';
 
-let state = {};
+let state = { isStopped: true };
 
 function handleStrictSwitch(event) {
   state = setStrict(state, event.target.checked);
@@ -26,9 +26,13 @@ strictSwitch.addEventListener('change', handleStrictSwitch);
 
 function handleStartButton() {
   clearTimeoutWait();
-  state = setStrict(initialState(), strictSwitch.checked);
-  showStage(state);
-  playButtonSeries(state);
+  if (state.isStopped) {
+    state = setStrict(initialState(), strictSwitch.checked);
+    gameStarted(state);
+  } else {
+    state = { isStopped: true };
+    gameStopped();
+  }
 }
 
 const startButton = document.querySelector('#btn-start');

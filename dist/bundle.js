@@ -1914,12 +1914,12 @@ var TIMING = exports.TIMING = {
  * @enum {string}
  */
 var SOUNDS = exports.SOUNDS = {
-  blue: './dist/sounds/blue.mp3',
-  green: './dist/sounds/green.mp3',
-  red: './dist/sounds/red.mp3',
-  yellow: './dist/sounds/yellow.mp3',
-  wrong: './dist/sounds/wrong.mp3',
-  win: './dist/sounds/win.mp3'
+  blue: 329.63,
+  green: 164.81,
+  red: 220.0,
+  yellow: 277.18,
+  wrong: 42,
+  win: 'TODO'
 };
 
 /**
@@ -3000,7 +3000,7 @@ var _domManipulation = __webpack_require__(333);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var state = {};
+var state = { isStopped: true };
 
 function handleStrictSwitch(event) {
   state = (0, _utils.setStrict)(state, event.target.checked);
@@ -3011,9 +3011,13 @@ strictSwitch.addEventListener('change', handleStrictSwitch);
 
 function handleStartButton() {
   (0, _domManipulation.clearTimeoutWait)();
-  state = (0, _utils.setStrict)((0, _initialState2.default)(), strictSwitch.checked);
-  (0, _domManipulation.showStage)(state);
-  (0, _domManipulation.playButtonSeries)(state);
+  if (state.isStopped) {
+    state = (0, _utils.setStrict)((0, _initialState2.default)(), strictSwitch.checked);
+    (0, _domManipulation.gameStarted)(state);
+  } else {
+    state = { isStopped: true };
+    (0, _domManipulation.gameStopped)();
+  }
 }
 
 var startButton = document.querySelector('#btn-start');
@@ -9436,7 +9440,7 @@ var isCorrect = false;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameWon = exports.wrongDom = exports.advanceDom = exports.showStage = exports.buttonUnpressed = exports.buttonPressed = exports.playButtonSeries = exports.clearTimeoutWait = undefined;
+exports.gameWon = exports.wrongDom = exports.advanceDom = exports.gameStopped = exports.gameStarted = exports.showStage = exports.buttonUnpressed = exports.buttonPressed = exports.playButtonSeries = exports.clearTimeoutWait = undefined;
 
 var _constants = __webpack_require__(64);
 
@@ -9490,6 +9494,11 @@ var makeUnlit = function makeUnlit(id) {
   return removeClassFrom(id, 'light');
 };
 
+var twice = function twice(fn) {
+  fn();
+  fn();
+};
+
 var setTimeoutWait = function setTimeoutWait() {
   timeoutWaitId = setTimeout(_index.wrongButtonPressed, _constants.TIMING.wait);
 };
@@ -9529,8 +9538,17 @@ var showStageMsg = function showStageMsg(msg) {
   stageNode.innerText = msg;
 };
 
-var startOver = function startOver() {
+var showStartMsg = function showStartMsg(msg) {
+  var startNode = element('btn-start');
+  startNode.innerText = msg;
+};
+
+var pressStart = function pressStart() {
   return element('btn-start').dispatchEvent(new MouseEvent('click'));
+};
+
+var startOver = function startOver() {
+  twice(pressStart);
 };
 
 var playButtonSeries = exports.playButtonSeries = function playButtonSeries(state) {
@@ -9551,6 +9569,18 @@ var showStage = exports.showStage = function showStage(state) {
   showStageMsg('Stage: ' + (0, _utils.formatStageNum)(state.currentStage));
 };
 
+var gameStarted = exports.gameStarted = function gameStarted(state) {
+  showStage(state);
+  showStartMsg('Stop');
+  playButtonSeries(state);
+};
+
+var gameStopped = exports.gameStopped = function gameStopped() {
+  makeButtonsUnclickable();
+  showStageMsg('Stage: --');
+  showStartMsg('Start');
+};
+
 var advanceDom = exports.advanceDom = function advanceDom(state) {
   if (state.toTest === 0) {
     makeButtonsUnclickable();
@@ -9569,8 +9599,7 @@ var wrongDom = exports.wrongDom = function wrongDom(state) {
     if (state.isStrict) {
       startOver();
     } else {
-      showStage(state);
-      playButtonSeries(state);
+      gameStarted(state);
     }
   }, _constants.TIMING.wrong);
 };
@@ -9592,149 +9621,16 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _audioFx = __webpack_require__(335);
-
-var _audioFx2 = _interopRequireDefault(_audioFx);
-
 var _constants = __webpack_require__(64);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var sounds = {};
-Object.entries(_constants.SOUNDS).forEach(function (sound) {
-  sounds[sound[0]] = (0, _audioFx2.default)(sound[1], { pool: 4, volume: 1 });
-});
+// const sounds = {};
+// Object.entries(SOUNDS).forEach(sound => {
+//   sounds[sound[0]] = AudioFX(sound[1], { pool: 4, volume: 1 });
+// });
 
 exports.default = function (sound) {
   // sounds[sound].play();
 };
-
-/***/ }),
-/* 335 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function AudioFX() {
-  //---------------------------------------------------------------------------
-
-  var VERSION = '0.4.0';
-
-  //---------------------------------------------------------------------------
-
-  var hasAudio = false,
-      audio = document.createElement('audio'),
-      audioSupported = function audioSupported(type) {
-    var s = audio.canPlayType(type);
-    return s === 'probably' || s === 'maybe';
-  };
-  if (audio && audio.canPlayType) {
-    hasAudio = {
-      ogg: audioSupported('audio/ogg; codecs="vorbis"'),
-      mp3: audioSupported('audio/mpeg;'),
-      m4a: audioSupported('audio/x-m4a;') || audioSupported('audio/aac;'),
-      wav: audioSupported('audio/wav; codecs="1"'),
-      loop: typeof audio.loop === 'boolean' // some browsers (FF) dont support loop yet
-    };
-  }
-
-  //---------------------------------------------------------------------------
-
-  var create = function create(src, options, onload) {
-    var audio = document.createElement('audio');
-
-    if (onload) {
-      var ready = function ready() {
-        audio.removeEventListener('canplay', ready, false);
-        onload();
-      };
-      audio.addEventListener('canplay', ready, false);
-    }
-
-    if (options.loop && !hasAudio.loop) audio.addEventListener('ended', function () {
-      audio.currentTime = 0;
-      audio.play();
-    }, false);
-
-    audio.volume = options.volume || 0.1;
-    audio.autoplay = options.autoplay;
-    audio.loop = options.loop;
-    audio.src = src;
-
-    return audio;
-  };
-
-  //---------------------------------------------------------------------------
-
-  var choose = function choose(formats) {
-    for (var n = 0; n < formats.length; n++) {
-      if (hasAudio && hasAudio[formats[n]]) return formats[n];
-    }
-  };
-
-  //---------------------------------------------------------------------------
-
-  var find = function find(audios) {
-    var n = void 0,
-        audio = void 0;
-    for (n = 0; n < audios.length; n++) {
-      audio = audios[n];
-      if (audio.paused || audio.ended) return audio;
-    }
-  };
-
-  //---------------------------------------------------------------------------
-
-  var afx = function afx(src, options, onload) {
-    options = options || {};
-
-    var formats = options.formats || [],
-        format = choose(formats),
-        pool = [];
-
-    src += format ? '.' + format : '';
-
-    if (hasAudio) {
-      for (var n = 0; n < (options.pool || 1); n++) {
-        pool.push(create(src, options, n == 0 ? onload : null));
-      }
-    } else {
-      onload();
-    }
-
-    return {
-      audio: pool.length == 1 ? pool[0] : pool,
-
-      play: function play() {
-        var audio = find(pool);
-        if (audio) audio.play();
-      },
-      stop: function stop() {
-        var n = void 0,
-            audio = void 0;
-        for (n = 0; n < pool.length; n++) {
-          audio = pool[n];
-          audio.pause();
-          audio.currentTime = 0;
-        }
-      }
-    };
-  };
-
-  //---------------------------------------------------------------------------
-
-  afx.version = VERSION;
-  afx.supported = hasAudio;
-
-  return afx;
-
-  //---------------------------------------------------------------------------
-}();
 
 /***/ })
 /******/ ]);
