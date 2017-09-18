@@ -2072,7 +2072,10 @@ var advanceState = exports.advanceState = function advanceState(oldState) {
  * @return {object}
  */
 var wrongState = exports.wrongState = function wrongState(oldState) {
-  return getNewState(oldState, { toTest: 0 });
+  return getNewState(oldState, {
+    toTest: 0,
+    lastWrong: oldState.buttonSeries[oldState.toTest]
+  });
 };
 
 /***/ }),
@@ -3000,7 +3003,7 @@ var _domManipulation = __webpack_require__(333);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var state = { isStopped: true };
+var state = {};
 
 function handleStrictSwitch(event) {
   state = (0, _utils.setStrict)(state, event.target.checked);
@@ -3011,11 +3014,10 @@ strictSwitch.addEventListener('change', handleStrictSwitch);
 
 function handleStartButton() {
   (0, _domManipulation.clearTimeoutWait)();
-  if (state.isStopped) {
+  if ((0, _domManipulation.isStopped)()) {
     state = (0, _utils.setStrict)((0, _initialState2.default)(), strictSwitch.checked);
     (0, _domManipulation.gameStarted)(state);
   } else {
-    state = { isStopped: true };
     (0, _domManipulation.gameStopped)();
   }
 }
@@ -9380,7 +9382,8 @@ exports.default = function () {
     buttonSeries: buttonSeries(),
     toTest: toTest,
     isStrict: isStrict,
-    isCorrect: isCorrect
+    isCorrect: isCorrect,
+    lastWrong: lastWrong
   };
 };
 
@@ -9426,6 +9429,12 @@ var isStrict = false;
 var isCorrect = false;
 
 /**
+ * # Button that should have been pressed, the last time it was wrong
+ * @type {String}
+ */
+var lastWrong = '';
+
+/**
  * Creates initial State object
  * @return {Object}
  */
@@ -9440,7 +9449,7 @@ var isCorrect = false;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.gameWon = exports.wrongDom = exports.advanceDom = exports.gameStopped = exports.gameStarted = exports.showStage = exports.buttonUnpressed = exports.buttonPressed = exports.playButtonSeries = exports.clearTimeoutWait = undefined;
+exports.gameWon = exports.wrongDom = exports.advanceDom = exports.gameStopped = exports.gameStarted = exports.showStage = exports.buttonUnpressed = exports.buttonPressed = exports.playButtonSeries = exports.clearTimeoutWait = exports.isStopped = undefined;
 
 var _constants = __webpack_require__(64);
 
@@ -9457,6 +9466,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 var timeoutWaitId = void 0;
+var sound = void 0;
+var Stopped = true;
 
 var element = function element(id) {
   return document.getElementById(id);
@@ -9494,6 +9505,10 @@ var makeUnlit = function makeUnlit(id) {
   return removeClassFrom(id, 'light');
 };
 
+var isStopped = exports.isStopped = function isStopped() {
+  return Stopped;
+};
+
 var twice = function twice(fn) {
   fn();
   fn();
@@ -9508,6 +9523,7 @@ var clearTimeoutWait = exports.clearTimeoutWait = function clearTimeoutWait() {
 };
 
 var playButton = function playButton(button, buttons, duration) {
+  if (isStopped()) return;
   if (!button) {
     makeButtonsClickable();
     setTimeoutWait();
@@ -9515,9 +9531,10 @@ var playButton = function playButton(button, buttons, duration) {
   }
   var buttonID = _constants.BUTTONS[button];
   makeLit(buttonID);
-  (0, _sound2.default)(button);
+  sound = (0, _sound2.default)(button);
   setTimeout(function () {
     makeUnlit(buttonID);
+    sound.stop();
     setTimeout(function () {
       return playButtons(buttons, duration);
     }, // eslint-disable-line no-use-before-define
@@ -9558,11 +9575,12 @@ var playButtonSeries = exports.playButtonSeries = function playButtonSeries(stat
 
 var buttonPressed = exports.buttonPressed = function buttonPressed(id) {
   makeLit(id);
-  (0, _sound2.default)(id.slice(4));
+  sound = (0, _sound2.default)(id.slice(4));
 };
 
 var buttonUnpressed = exports.buttonUnpressed = function buttonUnpressed(id) {
   makeUnlit(id);
+  sound.stop();
 };
 
 var showStage = exports.showStage = function showStage(state) {
@@ -9570,12 +9588,14 @@ var showStage = exports.showStage = function showStage(state) {
 };
 
 var gameStarted = exports.gameStarted = function gameStarted(state) {
+  Stopped = false;
   showStage(state);
   showStartMsg('Stop');
   playButtonSeries(state);
 };
 
 var gameStopped = exports.gameStopped = function gameStopped() {
+  Stopped = true;
   makeButtonsUnclickable();
   showStageMsg('Stage: --');
   showStartMsg('Start');
@@ -9594,20 +9614,21 @@ var advanceDom = exports.advanceDom = function advanceDom(state) {
 var wrongDom = exports.wrongDom = function wrongDom(state) {
   makeButtonsUnclickable();
   showStageMsg(_constants.WRONG_TEXT);
-  (0, _sound2.default)('wrong');
+  sound = (0, _sound2.default)('wrong');
+  makeLit('btn-' + state.lastWrong);
   setTimeout(function () {
-    if (state.isStrict) {
-      startOver();
-    } else {
-      gameStarted(state);
-    }
+    sound.stop();
+    makeUnlit('btn-' + state.lastWrong);
+    setTimeout(function () {
+      if (state.isStrict) startOver();else gameStarted(state);
+    }, _constants.TIMING.before);
   }, _constants.TIMING.wrong);
 };
 
 var gameWon = exports.gameWon = function gameWon() {
   makeButtonsUnclickable();
   showStageMsg(_constants.WINNING_TEXT);
-  (0, _sound2.default)('win');
+  // playSound('win');
 };
 
 /***/ }),
@@ -9623,13 +9644,20 @@ Object.defineProperty(exports, "__esModule", {
 
 var _constants = __webpack_require__(64);
 
-// const sounds = {};
-// Object.entries(SOUNDS).forEach(sound => {
-//   sounds[sound[0]] = AudioFX(sound[1], { pool: 4, volume: 1 });
-// });
+var context = new (window.AudioContext || window.webkitAudioContext)();
 
 exports.default = function (sound) {
   // sounds[sound].play();
+  var osc = context.createOscillator();
+  osc.frequency.value = _constants.SOUNDS[sound];
+  osc.type = 'square';
+  osc.connect(context.destination);
+  osc.start(0);
+
+  var stop = function stop() {
+    osc.stop();
+  };
+  return { stop: stop };
 };
 
 /***/ })
