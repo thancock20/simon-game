@@ -4,6 +4,7 @@ import { wrongButtonPressed } from './index';
 import playSound from './sound';
 
 let timeoutWaitId;
+let sound;
 let Stopped = true;
 
 const element = id => document.getElementById(id);
@@ -46,9 +47,10 @@ const playButton = (button, buttons, duration) => {
   }
   const buttonID = BUTTONS[button];
   makeLit(buttonID);
-  playSound(button);
+  sound = playSound(button);
   setTimeout(() => {
     makeUnlit(buttonID);
+    sound.stop();
     setTimeout(
       () => playButtons(buttons, duration), // eslint-disable-line no-use-before-define
       TIMING.between,
@@ -85,11 +87,12 @@ export const playButtonSeries = state => {
 
 export const buttonPressed = id => {
   makeLit(id);
-  playSound(id.slice(4));
+  sound = playSound(id.slice(4));
 };
 
 export const buttonUnpressed = id => {
   makeUnlit(id);
+  sound.stop();
 };
 
 export const showStage = state => {
@@ -121,18 +124,18 @@ export const advanceDom = state => {
 export const wrongDom = state => {
   makeButtonsUnclickable();
   showStageMsg(WRONG_TEXT);
-  playSound('wrong');
+  sound = playSound('wrong');
   setTimeout(() => {
-    if (state.isStrict) {
-      startOver();
-    } else {
-      gameStarted(state);
-    }
+    sound.stop();
+    setTimeout(() => {
+      if (state.isStrict) startOver();
+      else gameStarted(state);
+    }, TIMING.before);
   }, TIMING.wrong);
 };
 
 export const gameWon = () => {
   makeButtonsUnclickable();
   showStageMsg(WINNING_TEXT);
-  playSound('win');
+  // playSound('win');
 };

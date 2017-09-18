@@ -1,10 +1,17 @@
 import { SOUNDS } from './constants';
 
-// const sounds = {};
-// Object.entries(SOUNDS).forEach(sound => {
-//   sounds[sound[0]] = AudioFX(sound[1], { pool: 4, volume: 1 });
-// });
+const context = new (window.AudioContext || window.webkitAudioContext)();
 
 export default sound => {
   // sounds[sound].play();
+  const osc = context.createOscillator();
+  osc.frequency.value = SOUNDS[sound];
+  osc.type = 'square';
+  osc.connect(context.destination);
+  osc.start(0);
+
+  const stop = () => {
+    osc.stop();
+  };
+  return { stop };
 };
