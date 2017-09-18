@@ -51,6 +51,8 @@ function correctButtonPressed() {
 }
 
 function handleSimonButtonsUp(event) {
+  event.preventDefault();
+  event.target.removeEventListener('touchend', handleSimonButtonsUp);
   event.target.removeEventListener('mouseup', handleSimonButtonsUp);
   event.target.removeEventListener('mouseout', handleSimonButtonsUp);
   buttonUnpressed(event.target.id);
@@ -60,12 +62,15 @@ function handleSimonButtonsUp(event) {
 }
 
 function handleSimonButtonsDown(event) {
+  event.preventDefault();
   if (event.target.className !== 'simon-button') return;
   clearTimeoutWait();
+  event.target.addEventListener('touchend', handleSimonButtonsUp);
   event.target.addEventListener('mouseup', handleSimonButtonsUp);
   event.target.addEventListener('mouseout', handleSimonButtonsUp);
   buttonPressed(event.target.id);
 }
 
 const simonButtons = document.querySelector('#simon-buttons');
+simonButtons.addEventListener('touchstart', handleSimonButtonsDown);
 simonButtons.addEventListener('mousedown', handleSimonButtonsDown);
