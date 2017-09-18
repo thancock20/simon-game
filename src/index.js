@@ -5,6 +5,7 @@ import initialState from './initialState';
 import { FINAL_STAGE } from './constants';
 import { setStrict, testButtonPress, advanceState, wrongState } from './utils';
 import {
+  isStopped,
   clearTimeoutWait,
   buttonPressed,
   buttonUnpressed,
@@ -15,7 +16,7 @@ import {
   gameStopped,
 } from './domManipulation';
 
-let state = { isStopped: true };
+let state = {};
 
 function handleStrictSwitch(event) {
   state = setStrict(state, event.target.checked);
@@ -26,11 +27,10 @@ strictSwitch.addEventListener('change', handleStrictSwitch);
 
 function handleStartButton() {
   clearTimeoutWait();
-  if (state.isStopped) {
+  if (isStopped()) {
     state = setStrict(initialState(), strictSwitch.checked);
     gameStarted(state);
   } else {
-    state = { isStopped: true };
     gameStopped();
   }
 }

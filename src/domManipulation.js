@@ -4,6 +4,7 @@ import { wrongButtonPressed } from './index';
 import playSound from './sound';
 
 let timeoutWaitId;
+let Stopped = true;
 
 const element = id => document.getElementById(id);
 
@@ -23,6 +24,8 @@ const makeLit = id => addClassTo(id, 'light');
 
 const makeUnlit = id => removeClassFrom(id, 'light');
 
+export const isStopped = () => Stopped;
+
 const twice = fn => {
   fn();
   fn();
@@ -35,6 +38,7 @@ const setTimeoutWait = () => {
 export const clearTimeoutWait = () => clearTimeout(timeoutWaitId);
 
 const playButton = (button, buttons, duration) => {
+  if (isStopped()) return;
   if (!button) {
     makeButtonsClickable();
     setTimeoutWait();
@@ -93,12 +97,14 @@ export const showStage = state => {
 };
 
 export const gameStarted = state => {
+  Stopped = false;
   showStage(state);
   showStartMsg('Stop');
   playButtonSeries(state);
 };
 
 export const gameStopped = () => {
+  Stopped = true;
   makeButtonsUnclickable();
   showStageMsg('Stage: --');
   showStartMsg('Start');
