@@ -99,4 +99,8 @@ export const advanceState = oldState =>
  * @param  {object} oldState
  * @return {object}
  */
-export const wrongState = oldState => getNewState(oldState, { toTest: 0 });
+export const wrongState = oldState =>
+  getNewState(oldState, {
+    toTest: 0,
+    lastWrong: oldState.buttonSeries[oldState.toTest],
+  });

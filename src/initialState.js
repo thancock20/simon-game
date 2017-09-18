@@ -37,6 +37,12 @@ const isStrict = false;
 const isCorrect = false;
 
 /**
+ * # Button that should have been pressed, the last time it was wrong
+ * @type {String}
+ */
+const lastWrong = '';
+
+/**
  * Creates initial State object
  * @return {Object}
  */
@@ -47,5 +53,6 @@ export default function() {
     toTest,
     isStrict,
     isCorrect,
+    lastWrong,
   };
 }

@@ -125,8 +125,10 @@ export const wrongDom = state => {
   makeButtonsUnclickable();
   showStageMsg(WRONG_TEXT);
   sound = playSound('wrong');
+  makeLit(`btn-${state.lastWrong}`);
   setTimeout(() => {
     sound.stop();
+    makeUnlit(`btn-${state.lastWrong}`);
     setTimeout(() => {
       if (state.isStrict) startOver();
       else gameStarted(state);

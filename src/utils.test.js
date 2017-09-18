@@ -66,6 +66,7 @@ describe('setStrict', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const expected = Object.assign({}, state);
     setStrict(state, true);
@@ -80,6 +81,7 @@ describe('setStrict', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = setStrict(state, true);
     const expected = {
@@ -88,6 +90,7 @@ describe('setStrict', () => {
       toTest: 0,
       isStrict: true,
       isCorrect: true,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -99,6 +102,7 @@ describe('setStrict', () => {
       toTest: 0,
       isStrict: true,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = setStrict(state, false);
     const expected = {
@@ -107,6 +111,7 @@ describe('setStrict', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -120,6 +125,7 @@ describe('getButtonsWithinCurrent', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const expected = Object.assign({}, state);
     getButtonsWithinCurrent(state);
@@ -134,6 +140,7 @@ describe('getButtonsWithinCurrent', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = getButtonsWithinCurrent(state);
     const expected = ['blue'];
@@ -147,6 +154,7 @@ describe('getButtonsWithinCurrent', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = getButtonsWithinCurrent(state);
     const expected = ['blue', 'green'];
@@ -160,6 +168,7 @@ describe('getButtonsWithinCurrent', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = getButtonsWithinCurrent(state);
     const expected = state.buttonSeries;
@@ -230,6 +239,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const expected = Object.assign({}, state);
     testButtonPress('btn-blue', state);
@@ -244,6 +254,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const received = testButtonPress('btn-blue', state);
     const expected = {
@@ -252,6 +263,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -263,6 +275,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = testButtonPress('btn-red', state);
     const expected = {
@@ -271,6 +284,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -282,6 +296,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = testButtonPress('btn-blue', state);
     const expected = {
@@ -290,6 +305,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -301,6 +317,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const received = testButtonPress('btn-red', state);
     const expected = {
@@ -309,6 +326,7 @@ describe('testButtonPress', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -322,6 +340,7 @@ describe('advanceState', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const expected = Object.assign({}, state);
     advanceState(state);
@@ -336,6 +355,7 @@ describe('advanceState', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = advanceState(state);
     const expected = {
@@ -344,6 +364,7 @@ describe('advanceState', () => {
       toTest: 1,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -355,6 +376,7 @@ describe('advanceState', () => {
       toTest: 1,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     const received = advanceState(state);
     const expected = {
@@ -363,6 +385,7 @@ describe('advanceState', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: true,
+      lastWrong: '',
     };
     expect(received).toEqual(expected);
   });
@@ -376,6 +399,7 @@ describe('wrongState', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const expected = Object.assign({}, state);
     wrongState(state);
@@ -390,9 +414,18 @@ describe('wrongState', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const received = wrongState(state);
-    const expected = state;
+    const expected = {
+      currentStage: 2,
+      buttonSeries: ['blue', 'green', 'red', 'yellow'],
+      toTest: 0,
+      isStrict: false,
+      isCorrect: false,
+      lastWrong: 'blue',
+    };
+
     expect(received).toEqual(expected);
   });
 
@@ -403,6 +436,7 @@ describe('wrongState', () => {
       toTest: 1,
       isStrict: false,
       isCorrect: false,
+      lastWrong: '',
     };
     const received = wrongState(state);
     const expected = {
@@ -411,6 +445,7 @@ describe('wrongState', () => {
       toTest: 0,
       isStrict: false,
       isCorrect: false,
+      lastWrong: 'green',
     };
     expect(received).toEqual(expected);
   });
