@@ -23,7 +23,11 @@ const makeButtonsUnclickable = () => iterObj(BUTTONS, makeUnclickable);
 
 const makeLit = id => addClassTo(id, 'light');
 
+const makeButtonsLit = () => iterObj(BUTTONS, makeLit);
+
 const makeUnlit = id => removeClassFrom(id, 'light');
+
+const makeButtonsUnlit = () => iterObj(BUTTONS, makeUnlit);
 
 export const isStopped = () => Stopped;
 
@@ -137,7 +141,17 @@ export const wrongDom = state => {
 };
 
 export const gameWon = () => {
+  Stopped = true;
   makeButtonsUnclickable();
-  showStageMsg(WINNING_TEXT);
-  // playSound('win');
+  setTimeout(() => {
+    showStageMsg(WINNING_TEXT);
+    sound = playSound('win');
+    makeButtonsLit();
+    setTimeout(() => {
+      showStageMsg('Stage: --');
+      showStartMsg('Start');
+      sound.stop();
+      makeButtonsUnlit();
+    }, TIMING.wrong);
+  }, TIMING.before);
 };

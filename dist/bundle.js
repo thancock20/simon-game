@@ -1919,7 +1919,7 @@ var SOUNDS = exports.SOUNDS = {
   red: 220.0,
   yellow: 277.18,
   wrong: 42,
-  win: 'TODO'
+  win: 440
 };
 
 /**
@@ -9506,8 +9506,16 @@ var makeLit = function makeLit(id) {
   return addClassTo(id, 'light');
 };
 
+var makeButtonsLit = function makeButtonsLit() {
+  return (0, _utils.iterObj)(_constants.BUTTONS, makeLit);
+};
+
 var makeUnlit = function makeUnlit(id) {
   return removeClassFrom(id, 'light');
+};
+
+var makeButtonsUnlit = function makeButtonsUnlit() {
+  return (0, _utils.iterObj)(_constants.BUTTONS, makeUnlit);
 };
 
 var isStopped = exports.isStopped = function isStopped() {
@@ -9631,9 +9639,19 @@ var wrongDom = exports.wrongDom = function wrongDom(state) {
 };
 
 var gameWon = exports.gameWon = function gameWon() {
+  Stopped = true;
   makeButtonsUnclickable();
-  showStageMsg(_constants.WINNING_TEXT);
-  // playSound('win');
+  setTimeout(function () {
+    showStageMsg(_constants.WINNING_TEXT);
+    sound = (0, _sound2.default)('win');
+    makeButtonsLit();
+    setTimeout(function () {
+      showStageMsg('Stage: --');
+      showStartMsg('Start');
+      sound.stop();
+      makeButtonsUnlit();
+    }, _constants.TIMING.wrong);
+  }, _constants.TIMING.before);
 };
 
 /***/ }),

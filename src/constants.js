@@ -48,7 +48,7 @@ export const SOUNDS = {
   red: 220.0,
   yellow: 277.18,
   wrong: 42,
-  win: 'TODO',
+  win: 440,
 };
 
 /**
