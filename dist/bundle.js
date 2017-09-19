@@ -9564,13 +9564,11 @@ var playButtons = function playButtons(buttons, duration) {
 };
 
 var showStageMsg = function showStageMsg(msg) {
-  var stageNode = element('stage');
-  stageNode.innerText = msg;
+  element('stage').innerText = msg;
 };
 
 var showStartMsg = function showStartMsg(msg) {
-  var startNode = element('btn-start');
-  startNode.innerText = msg;
+  element('btn-start').innerText = msg;
 };
 
 var pressStart = function pressStart() {

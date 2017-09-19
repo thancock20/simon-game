@@ -68,13 +68,11 @@ const playButtons = (buttons, duration) => {
 };
 
 const showStageMsg = msg => {
-  const stageNode = element('stage');
-  stageNode.innerText = msg;
+  element('stage').innerText = msg;
 };
 
 const showStartMsg = msg => {
-  const startNode = element('btn-start');
-  startNode.innerText = msg;
+  element('btn-start').innerText = msg;
 };
 
 const pressStart = () =>
