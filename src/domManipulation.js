@@ -1,5 +1,10 @@
-import { BUTTONS, TIMING, WRONG_TEXT, WINNING_TEXT } from './constants';
-import { getButtonsWithinCurrent, iterObj, formatStageNum } from './utils';
+import { BUTTONS, TIMING, TEXT } from './constants';
+import {
+  getButtonsWithinCurrent,
+  iterObj,
+  objectKeyByValue,
+  formatStageNum,
+} from './utils';
 import { wrongButtonPressed } from './index';
 import playSound from './sound';
 
@@ -25,7 +30,8 @@ const makeUnlit = id => removeClassFrom(id, 'light');
 
 const makeButtonsUnlit = () => iterObj(BUTTONS, makeUnlit);
 
-export const isStopped = () => element('btn-start').innerText !== 'Stop';
+export const isStopped = () =>
+  element('btn-start').innerText === TEXT.startButtonStopped;
 
 const twice = fn => {
   fn();
@@ -93,7 +99,7 @@ let buttonPressedSound;
 
 export const buttonPressed = id => {
   makeLit(id);
-  buttonPressedSound = playSound(id.slice(4));
+  buttonPressedSound = playSound(objectKeyByValue(BUTTONS, id));
 };
 
 export const buttonUnpressed = id => {
@@ -102,19 +108,19 @@ export const buttonUnpressed = id => {
 };
 
 export const showStage = state => {
-  showStageMsg(`Stage: ${formatStageNum(state.currentStage)}`);
+  showStageMsg(TEXT.stagePrefix + formatStageNum(state.currentStage));
 };
 
 export const gameStarted = state => {
   showStage(state);
-  showStartMsg('Stop');
+  showStartMsg(TEXT.startButtonStarted);
   playButtonSeries(state);
 };
 
 export const gameStopped = () => {
   makeButtonsUnclickable();
-  showStageMsg('Stage: --');
-  showStartMsg('Start');
+  showStageMsg(TEXT.stagePrefix + TEXT.stageEmpty);
+  showStartMsg(TEXT.startButtonStopped);
 };
 
 export const advanceDom = state => {
@@ -127,12 +133,12 @@ export const advanceDom = state => {
 
 export const wrongDom = state => {
   makeButtonsUnclickable();
-  showStageMsg(WRONG_TEXT);
+  showStageMsg(TEXT.stageWrong);
   const sound = playSound('wrong');
-  makeLit(`btn-${state.lastWrong}`);
+  makeLit(BUTTONS[state.lastWrong]);
   setTimeout(() => {
     sound.stop();
-    makeUnlit(`btn-${state.lastWrong}`);
+    makeUnlit(BUTTONS[state.lastWrong]);
     setTimeout(() => {
       if (state.isStrict) startOver();
       else gameStarted(state);
@@ -143,12 +149,12 @@ export const wrongDom = state => {
 export const gameWon = () => {
   makeButtonsUnclickable();
   setTimeout(() => {
-    showStageMsg(WINNING_TEXT);
+    showStageMsg(TEXT.stageWinning);
     const sound = playSound('win');
     makeButtonsLit();
     setTimeout(() => {
-      showStageMsg('Stage: --');
-      showStartMsg('Start');
+      showStageMsg(TEXT.stagePrefix + TEXT.stageEmpty);
+      showStartMsg(TEXT.startButtonStopped);
       sound.stop();
       makeButtonsUnlit();
     }, TIMING.wrong);

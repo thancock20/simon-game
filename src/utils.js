@@ -1,3 +1,5 @@
+import { BUTTONS } from './constants';
+
 const newMappedArray = (n, fn) => [...Array(n)].map(fn);
 
 const getNewState = (oldState, stateDelta) =>
@@ -60,6 +62,15 @@ export const getButtonsWithinCurrent = state =>
 export const iterObj = (obj, fn) => Object.values(obj).forEach(fn);
 
 /**
+ * # Gets key for given value in object
+ * @param  {Object} obj
+ * @param  {*} val
+ * @return {string}
+ */
+export const objectKeyByValue = (obj, val) =>
+  Object.entries(obj).find(i => i[1] === val)[0];
+
+/**
  * # Format stage number, add 0 in front if less than 10
  * @param  {number} n
  * @return {string}
@@ -75,7 +86,8 @@ export const formatStageNum = n => (n < 10 ? '0' : '') + n.toString();
  */
 export const testButtonPress = (id, oldState) =>
   getNewState(oldState, {
-    isCorrect: id.slice(4) === oldState.buttonSeries[oldState.toTest],
+    isCorrect:
+      objectKeyByValue(BUTTONS, id) === oldState.buttonSeries[oldState.toTest],
   });
 
 /**

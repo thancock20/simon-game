@@ -8,18 +8,18 @@ import { getDurations } from './utils';
 export const FINAL_STAGE = 20;
 
 /**
- * # The text that appears when the final stage is beat
+ * # Text used throughout game
  * @readonly
- * @type {String}
+ * @enum {String}
  */
-export const WINNING_TEXT = 'YOU WIN!!';
-
-/**
- * # The text that appears when a wrong button is pressed
- * @readonly
- * @type {String}
- */
-export const WRONG_TEXT = 'TOO BAD!!';
+export const TEXT = {
+  startButtonStopped: 'Start', // also change index.html
+  startButtonStarted: 'Stop',
+  stagePrefix: 'Stage: ', // also change index.html
+  stageEmpty: '--', // also change index.html
+  stageWinning: 'YOU WIN!!',
+  stageWrong: 'TOO BAD!!',
+};
 
 /**
  * # Duration values for stages
@@ -29,18 +29,24 @@ export const WRONG_TEXT = 'TOO BAD!!';
  */
 const DURATION_VALUES = [520, 420, 320, 220];
 
+/**
+ * # Game timings in milliseconds
+ * @readonly
+ * @type {Object}
+ */
 export const TIMING = {
-  before: 800,
-  between: 50,
-  wait: 3000,
-  wrong: 1500,
+  before: 800, // before series starts to play
+  between: 50, // between buttons during playing series
+  wait: 3000, // wait time after series plays
+  wrong: 1500, // duration of wrong buzzer
+  // durations of buttons, in each stage
   durations: getDurations(FINAL_STAGE, DURATION_VALUES),
 };
 
 /**
- * # Paths to sounds used for gameplay
+ * # Frequencies of sounds used for gameplay
  * @readonly
- * @enum {string}
+ * @enum {number}
  */
 export const SOUNDS = {
   blue: 329.63,
@@ -61,6 +67,7 @@ export const SOUNDS = {
  * # Ids of the colored buttons
  * @readonly
  * @enum {ButtonPress}
+ * **Any changes should be reflected in index.html**
  */
 export const BUTTONS = {
   blue: 'btn-blue',

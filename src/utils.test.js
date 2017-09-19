@@ -10,6 +10,8 @@ import {
   wrongState,
 } from './utils';
 
+jest.mock('./constants');
+
 describe('getDurations', () => {
   test('produces correct array when n is 5', () => {
     const received = getDurations(5, [1000, 750, 500, 250]);
