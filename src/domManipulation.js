@@ -3,10 +3,6 @@ import { getButtonsWithinCurrent, iterObj, formatStageNum } from './utils';
 import { wrongButtonPressed } from './index';
 import playSound from './sound';
 
-let timeoutWaitId;
-let sound;
-let Stopped = true;
-
 const element = id => document.getElementById(id);
 
 const addClassTo = (id, cls) => element(id).classList.add(cls);
@@ -29,12 +25,16 @@ const makeUnlit = id => removeClassFrom(id, 'light');
 
 const makeButtonsUnlit = () => iterObj(BUTTONS, makeUnlit);
 
-export const isStopped = () => Stopped;
+export const isStopped = () => element('btn-start').innerText !== 'Stop';
 
 const twice = fn => {
   fn();
   fn();
 };
+
+// Temp. variable to hold ID for wait timeout, so it can be cleared
+// Used only in `setTimeoutWait` and `clearTimeoutWait`
+let timeoutWaitId;
 
 const setTimeoutWait = () => {
   timeoutWaitId = setTimeout(wrongButtonPressed, TIMING.wait);
@@ -51,7 +51,7 @@ const playButton = (button, buttons, duration) => {
   }
   const buttonID = BUTTONS[button];
   makeLit(buttonID);
-  sound = playSound(button);
+  const sound = playSound(button);
   setTimeout(() => {
     makeUnlit(buttonID);
     sound.stop();
@@ -87,14 +87,18 @@ export const playButtonSeries = state => {
   playButtons(getButtonsWithinCurrent(state), duration);
 };
 
+// Temp. variable to hold ID for sound, so it can be stopped
+// Used only in `buttonPressed` and `buttonUnpressed`
+let buttonPressedSound;
+
 export const buttonPressed = id => {
   makeLit(id);
-  sound = playSound(id.slice(4));
+  buttonPressedSound = playSound(id.slice(4));
 };
 
 export const buttonUnpressed = id => {
   makeUnlit(id);
-  sound.stop();
+  buttonPressedSound.stop();
 };
 
 export const showStage = state => {
@@ -102,14 +106,12 @@ export const showStage = state => {
 };
 
 export const gameStarted = state => {
-  Stopped = false;
   showStage(state);
   showStartMsg('Stop');
   playButtonSeries(state);
 };
 
 export const gameStopped = () => {
-  Stopped = true;
   makeButtonsUnclickable();
   showStageMsg('Stage: --');
   showStartMsg('Start');
@@ -126,7 +128,7 @@ export const advanceDom = state => {
 export const wrongDom = state => {
   makeButtonsUnclickable();
   showStageMsg(WRONG_TEXT);
-  sound = playSound('wrong');
+  const sound = playSound('wrong');
   makeLit(`btn-${state.lastWrong}`);
   setTimeout(() => {
     sound.stop();
@@ -139,11 +141,10 @@ export const wrongDom = state => {
 };
 
 export const gameWon = () => {
-  Stopped = true;
   makeButtonsUnclickable();
   setTimeout(() => {
     showStageMsg(WINNING_TEXT);
-    sound = playSound('win');
+    const sound = playSound('win');
     makeButtonsLit();
     setTimeout(() => {
       showStageMsg('Stage: --');
