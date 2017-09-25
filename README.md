@@ -18,4 +18,4 @@ I originally made this project on Codepen months ago. This remake:
 
 The game is at [http://www.toddhancock.net/simon-game/](http://www.toddhancock.net/simon-game/).
 
-Here's the link to the [original Codepen version](https://codepen.io/thancock20/pen/NxKrWZ) for comparision.
+Here's the link to the [original Codepen version](https://codepen.io/thancock20/pen/NxKrWZ) for comparison.
